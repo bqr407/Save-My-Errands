@@ -1,0 +1,8 @@
+extends layout
+
+block content
+  h1= title
+  h3 Errand Helper
+  div(id='map')
+    script(async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAW3_9PcxZpXES-5eBTCACTuiA4GLQgOCo&callback=initMap")
+    script(src="javascripts/map.js")
