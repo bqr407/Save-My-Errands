@@ -11,9 +11,11 @@ function initMap(lat, long) {
             center: userlocation
         });
     // A new marker, positioned at user's location
+    var image = 'images/mylocation.png';
     var marker = new google.maps.Marker({
         position: userlocation,
-        map: map
+        map: map,
+        icon: image
     });
 }
 

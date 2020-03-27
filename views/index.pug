@@ -1,8 +1,11 @@
 extends layout
 
 block content
-  h1= title
-  h3 Errand Helper
+  h2 StayAtHome Errands - Volunteers do your errands during COVID-19 so you don't have to!
+  a(href='/request')
+    button(class = 'button')
+      p Request an Errand
+  p Click on a pin to view errands! (please refresh the page if the map is not displaying properly)
   div(id='map')
     script(async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAW3_9PcxZpXES-5eBTCACTuiA4GLQgOCo&callback=initMap")
     script(src="javascripts/map.js")

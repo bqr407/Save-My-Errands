@@ -1,0 +1,40 @@
+extends layout
+
+block content
+  .main.container
+    .row
+      .col-md-6.col-md-offset-3
+        h2.display-4.m-b-2 Request an Errand
+
+        form(method='post' action='postrequest')
+          div.form-group
+            label(for='name')
+            p
+              strong Name:
+            input#name.form-control(type='text', placeholder='First Name' name='name' required)
+          div.form-group
+            label(for='email')
+            p
+              strong Email
+              |  (we send you a link to manage your errand listing):
+            input#email.form-control(type='email', placeholder='Email' name='email' required)
+          div.form-group
+            label(for='errandtitle')
+              p
+                strong Title of Errand
+                |  (ex: "need groceries", "mail my package", etc.):
+            input#errandtitle.form-control(type='text', placeholder='Errand Title' name='errandtitle' required)
+          div.form-group
+            label(for='description')
+            p
+              strong Description
+              |  (tell people what you need help with):
+            textarea#description.form-control(placeholder='Description of errand(s)' name='description' required)
+          div.form-group
+            label(for='usercontact')
+            p
+              strong Contact Information
+              |  (how should a volunteer reach out? we suggest supplying a phone number or email):
+            input#usercontact.form-control(type='text', placeholder='Contact Information' name='usercontact' required)
+          p
+          button.btn.btn-primary(type='submit') Post My Errand!

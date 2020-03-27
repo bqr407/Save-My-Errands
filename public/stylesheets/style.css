@@ -11,3 +11,8 @@ a {
   height: 800px;
   width: 100%;
 }
+
+#description {
+  height: 100px;
+  width: 400px;
+}
