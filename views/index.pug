@@ -1,11 +1,48 @@
 extends layout
 
 block content
+  script.
+    function initMap(lat, long) {
+      // The location of the starting point
+      var userlocation = {
+        lat: lat,
+        lng: long
+      };
+      // The map, centered at user's location
+      var map = new google.maps.Map(
+              document.getElementById('map'), {
+                zoom: 14,
+                center: userlocation
+              });
+      // A new marker, positioned at user's location
+      var image = 'images/mylocation.png';
+      var marker = new google.maps.Marker({
+        position: userlocation,
+        map: map,
+        icon: image
+      });
+    }
+
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+      } else {
+        // Can't get their location
+      }
+    }
+
+    function showPosition(position) {
+      let x = [position.coords.latitude, position.coords.longitude];
+      document.cookie = "location=" + x[0].toString() + "," + x[1].toString();
+      initMap(x[0], x[1]);
+    }
+
+    setTimeout(getLocation, 300);
+
   h2 StayAtHome Errands - Volunteers do your errands during COVID-19 so you don't have to!
   a(href='/request')
     button(class = 'button')
       p Request an Errand
-  p Click on a pin to view errands! (please refresh the page if the map is not displaying properly)
+  p Click on a pin to view errands! (please refresh the page if the map is not displaying properly) #{ID}
   div(id='map')
-    script(async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAW3_9PcxZpXES-5eBTCACTuiA4GLQgOCo&callback=initMap")
-    script(src="javascripts/map.js")
+    script(async defer src="https://maps.googleapis.com/maps/api/js?key=apikey&callback=initMap")
