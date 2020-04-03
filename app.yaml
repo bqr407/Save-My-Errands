@@ -11,3 +11,6 @@ resources:
   cpu: 1
   memory_gb: 0.5
   disk_size_gb: 10
+
+beta_settings:
+  cloud_sql_instances: white-rapids:us-central1:errand-helper

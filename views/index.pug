@@ -11,16 +11,58 @@ block content
       // The map, centered at user's location
       var map = new google.maps.Map(
               document.getElementById('map'), {
-                zoom: 14,
+                zoom: 12,
                 center: userlocation
               });
       // A new marker, positioned at user's location
-      var image = 'images/mylocation.png';
+      var mymarkerimage = 'images/mylocation.png';
       var marker = new google.maps.Marker({
         position: userlocation,
         map: map,
-        icon: image
+        icon: mymarkerimage
       });
+
+
+      let mapdata = JSON.parse(getCookie("mapdata"));
+      let errandmarkers = [];
+      let contentstrings = [];
+      let infowindows = [];
+      for (let x in mapdata) {
+        let errand = mapdata[x].errandtitle;
+        let description = mapdata[x].description;
+        let contactinfo = mapdata[x].contactinfo;
+        let location = mapdata[x].location.split(',');
+        var errandlocation = {
+          lat: parseFloat(location[0]),
+          lng: parseFloat(location[1])
+        };
+        var errandhomeimage = 'images/home.png';
+        errandmarkers[x] = new google.maps.Marker({
+          position: errandlocation,
+          map: map,
+          icon: errandhomeimage
+        });
+
+
+        contentstrings[x] = '<div id="content">' +
+                '<div id="siteNotice">' +
+                '</div>' +
+                '<h1 id="firstHeading" class="firstHeading">' + errand + '</h1>' +
+                '<div id="bodyContent">' +
+                '<p><b>Description: </b>' + description + '</p>' +
+                '<p><b>Contact Info: </b>' + contactinfo + '</p>' +
+                '</div>' +
+                '</div>';
+        infowindows[x] = new google.maps.InfoWindow({
+          content: contentstrings[x]
+        })
+
+        errandmarkers[x].addListener('click', function() {
+          infowindows[x].open(map, errandmarkers[x]);
+        })
+      }
+
+
     }
 
     function getLocation() {
@@ -39,10 +81,26 @@ block content
 
     setTimeout(getLocation, 300);
 
-  h2 StayAtHome Errands - Volunteers do your errands during COVID-19 so you don't have to!
-  a(href='/request')
-    button(class = 'button')
-      p Request an Errand
-  p Click on a pin to view errands! (please refresh the page if the map is not displaying properly) #{ID}
+    function getCookie(name) {
+      var cookieArr = document.cookie.split(";");
+      for (var i = 0; i < cookieArr.length; i++) {
+        var cookiePair = cookieArr[i].split("=");
+        if (name == cookiePair[0].trim()) {
+          return decodeURIComponent(cookiePair[1]);
+        }
+      }
+      return null;
+    }
+
+
+  div(id='panel')
+    div(id='request')
+      a(href='/request')
+        img(src='images/request.png')
+    div(id='logo')
+      img(src='images/logo.png')
   div(id='map')
-    script(async defer src="https://maps.googleapis.com/maps/api/js?key=apikey&callback=initMap")
+    script(async defer src="https://maps.googleapis.com/maps/api/js?key=key&callback=initMap")
+  div(id='about')
+    a(href='/about')
+      img(src='images/about.png')

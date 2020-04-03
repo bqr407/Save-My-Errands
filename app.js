@@ -11,11 +11,18 @@ app.set('view engine', 'pug');
 
 // Main page that has the map with user location and visible errand requests
 app.get('/', function (req, res) {
+
+  res.redirect("https://www.savemyerrands.com/main");
+
+});
+
+app.get('/main', function (req, res) {
   var connection = mysql.createConnection({
-    host: 'host',
+    socketPath: '/cloudsql/white-rapids:us-central1:errand-helper',
+    //host: '35.239.35.171',
     user: 'user',
-    password: 'password',
-    database: 'database'
+    password: 'pass',
+    database: 'db'
   });
 
   connection.connect(function(error) {
@@ -30,6 +37,7 @@ app.get('/', function (req, res) {
   let rowsort = [];
   let rowdata = [];
   let errandarray = [];
+  let mapstring = '{';
 
   connection.query("SELECT * from requests",
       function(error, rows){
@@ -39,12 +47,12 @@ app.get('/', function (req, res) {
         } else {
           for (let i = 0; i < rows.length; i++) {
             rowdata.push([{ID: rows.ID, time: rows.time, name: rows.name,
-            email: rows.email, errandtitle: rows.errandtitle, description:
-            rows.description, contactinfo: rows.contactinfo, location: rows.location}]);
+              email: rows.email, errandtitle: rows.errandtitle, description:
+              rows.description, contactinfo: rows.contactinfo, location: rows.location}]);
           }
 
           // Make the JSON indexable to convert to our array
-          for (var x in rows) {
+          for (let x in rows) {
             rowsort.push(x);
           }
 
@@ -56,11 +64,28 @@ app.get('/', function (req, res) {
           for (let i = 0; i < rowsort.length; i++) {
             errandarray.push({ID: rows[rowsort[i]].ID, time: rows[rowsort[i]].time, name: rows[rowsort[i]].name, email: rows[rowsort[i]].email, errandtitle: rows[rowsort[i]].errandtitle, description: rows[rowsort[i]].description, contactinfo: rows[rowsort[i]].contactinfo, location: rows[rowsort[i]].location});
           }
-          console.log(errandarray);
+          for (let x = 0; x < errandarray.length; x++) {
+            mapstring = mapstring + '"' + x.toString() + '":' + JSON.stringify(errandarray[x]);
+            if (x+1 === errandarray.length) {
+              mapstring = mapstring + '}';
+            } else {
+              mapstring = mapstring + ',';
+            }
+          }
         }
       }
   );
-  res.render('index', errandarray);
+
+  function setMapCookie() {
+    res.cookie('mapdata', mapstring, { maxAge: 900000, httpOnly: false });
+  }
+
+  setTimeout(setMapCookie, 250);
+
+  function render() {
+    res.render('index');
+  }
+  setTimeout(render, 250);
 });
 
 // Future page for user to manage their post through the email link
@@ -91,10 +116,11 @@ app.post('/postrequest', function (req, res) {
   let timestamp = year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds;
 
   var connection = mysql.createConnection({
-    host: 'host',
+    socketPath: '/cloudsql/white-rapids:us-central1:errand-helper',
+    //host: '35.239.35.171',
     user: 'user',
     password: 'pass',
-    database: 'database'
+    database: 'db'
   });
 
   connection.connect(function(error) {
@@ -109,8 +135,8 @@ app.post('/postrequest', function (req, res) {
   let location = req.cookies['location'];
 
   connection.query("INSERT INTO requests (ID, time, name, email, errandtitle, " +
-      "description, contactinfo, location) VALUES (null, '" + timestamp + "', '" + name + "', '" + email +
-      "', '" + errandtitle + "', '" + description + "', '" + usercontact + "', '" + location + "')",
+      "description, contactinfo, location) VALUES (null, '" + timestamp + "', '" + connection.escape(name) + "', '" + connection.escape(email) +
+      "', '" + connection.escape(errandtitle) + "', '" + connection.escape(description) + "', '" + connection.escape(usercontact) + "', '" + connection.escape(location) + "')",
       function(error, rows){
         if(!!error) {
           console.log('Query Error');
@@ -121,6 +147,10 @@ app.post('/postrequest', function (req, res) {
   );
 
   res.redirect('/');
+});
+
+app.get('/about', function (req, res) {
+  res.render('about');
 });
 
 app.post('/', function (req, res) {
