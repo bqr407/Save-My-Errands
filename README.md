@@ -1,2 +1,2 @@
-# COVID-19-Errand-Helper
-Live development version at: https://white-rapids.appspot.com/
+# Save My Errands
+Live development version at: https://www.savemyerrands.com/
